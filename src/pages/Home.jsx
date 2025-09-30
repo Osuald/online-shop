@@ -69,22 +69,6 @@ export default function Home() {
         <h1 className="text-2xl font-bold mb-8">Discover Our Menu</h1>
       </div>
 
-      {/* <div>
-        {images.map((img) => (
-          <div key={img.id} className="mb-8">
-            <h2 className="text-xl font-semibold mb-2">{img.title}</h2>{" "}
-            {/* Title */}
-      {/* <img
-              src={img.thumbnail}
-              alt={img.title}
-              className="w-48 h-48 object-cover mx-auto rounded-lg"
-            />{" "}
-            {/* Image */}
-      {/* <p className="mt-2">{img.description}</p> {/* Description */}
-      {/* </div>
-        ))}
-      </div> */}
-
       <div className="flex justify-center gap-8 items-center mb-4 flex-wrap">
         {images.map((img) => {
           const cartItem = cartItems.find((item) => item.title === img.title);
