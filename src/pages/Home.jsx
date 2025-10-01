@@ -2,11 +2,15 @@
 import { useState, useEffect } from "react";
 import CircularLoadingIndicator from "../components/CircularLoadingIndicator";
 import Cart from "../components/cart";
-import { FaPlus, FaMinus } from "react-icons/fa";
+import RevealOnScroll from "../components/RevealOnScroll";
+import CartIcon from "../components/CartIcon";
+import { FaPlus, FaMinus, FaShoppingCart } from "react-icons/fa";
+import { FaXmark } from "react-icons/fa6";
 
 export default function Home() {
   const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [images, setImages] = useState([]);
 
   // Add item (or increase quantity if already in cart)
@@ -65,57 +69,75 @@ export default function Home() {
 
   return (
     <div className="relative text-white p-10 top-20 text-center ">
+      {!isCartOpen && (
+        <div
+          onClick={() => setIsCartOpen(!isCartOpen)}
+          className="absolute top-4 right-4"
+        >
+          <CartIcon />
+        </div>
+      )}
+
       <div>
         <h1 className="text-2xl font-bold mb-8">Discover Our Menu</h1>
       </div>
 
       <div className="flex justify-center gap-8 items-center mb-4 flex-wrap">
-        {images.map((img) => {
+        {images.map((img, i) => {
           const cartItem = cartItems.find((item) => item.title === img.title);
           return (
-            <div
-              key={img.id}
-              className="bg-cover bg-center p-4 rounded-lg w-60 h-60 shadow-lg flex flex-col justify-between"
-              style={{ backgroundImage: `url(${img.thumbnail})` }}
-            >
-              <div className="relative z-10">
-                <p>{img.title}</p>
-              </div>
-
-              {/* Order Button / Quantity Controls */}
-              {cartItem ? (
-                <div className="flex items-center justify-center gap-3">
-                  <button
-                    onClick={() => handleDecrease(img)}
-                    className=" cursor-pointer px-2 py-1 bg-gray-700 rounded-full hover:bg-gray-800"
-                  >
-                    <FaMinus />
-                  </button>
-                  <span>{cartItem.quantity}</span>
+            <RevealOnScroll key={img.id || img.name} custom={i}>
+              <div
+                key={img.id}
+                className="bg-cover bg-center p-4 rounded-lg bg-gray-800 shadow-xl flex flex-col justify-between"
+              >
+                <div className="relative z-10">
+                  <p>{img.title}</p>
+                </div>
+                <div>
+                  <img src={img.thumbnail} alt="Product image" />
+                </div>
+                {/* Order Button / Quantity Controls */}
+                {cartItem ? (
+                  <div className="flex items-center justify-center gap-2 bg-gray-800 rounded-2xl py-2">
+                    <button
+                      onClick={() => handleDecrease(img)}
+                      className=" cursor-pointer px-1 py-1 border-1 bg-gray-700 rounded-full hover:bg-gray-800"
+                    >
+                      <FaMinus />
+                    </button>
+                    <span>{cartItem.quantity}</span>
+                    <button
+                      onClick={() => handleOrder(img)}
+                      className="cursor-pointer px-1 py-1 border-1 bg-gray-700 rounded-full hover:bg-gray-800"
+                    >
+                      <FaPlus />
+                    </button>
+                  </div>
+                ) : (
                   <button
                     onClick={() => handleOrder(img)}
-                    className="cursor-pointer px-2 py-1 bg-gray-700 rounded-full hover:bg-gray-800"
+                    className="flex items-center justify-center gap-2 py-2 cursor-pointer font-semibold text-white bg-gray-800 rounded-2xl shadow-lg hover:bg-gray-900"
                   >
-                    <FaPlus />
+                    <FaShoppingCart /> Add to Cart
                   </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => handleOrder(img)}
-                  className="px-3 py-2 text-xs font-semibold text-white bg-gray-800 rounded-2xl shadow-lg hover:bg-gray-900"
-                >
-                  Order Now
-                </button>
-              )}
-            </div>
+                )}
+              </div>
+            </RevealOnScroll>
           );
         })}
       </div>
+      {}
 
-      {/* Cart */}
-      <div className="flex flex-col items-center justify-center right-0 bg-gray-700 rounded-lg ">
-        <Cart cartItems={cartItems} onRemove={handleDecrease} />
-      </div>
+      {isCartOpen && (
+        <div className="flex flex-col items-center justify-center right-0 bg-gray-700 rounded-lg ">
+          <Cart
+            cartItems={cartItems}
+            onRemove={handleDecrease}
+            onClose={() => setIsCartOpen(false)}
+          />
+        </div>
+      )}
     </div>
   );
 }
