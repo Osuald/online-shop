@@ -1,19 +1,39 @@
-// src/pages/Home.jsx
 import { useState, useEffect } from "react";
 import CircularLoadingIndicator from "../components/CircularLoadingIndicator";
-import Cart from "../components/cart";
+import Cart from "../components/Cart";
 import RevealOnScroll from "../components/RevealOnScroll";
 import CartIcon from "../components/CartIcon";
 import { FaPlus, FaMinus, FaShoppingCart } from "react-icons/fa";
-import { FaXmark } from "react-icons/fa6";
 
 export default function Home() {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    const saved = sessionStorage.getItem("cartItems");
+    return saved ? JSON.parse(saved) : [];
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [images, setImages] = useState([]);
 
-  // Add item (or increase quantity if already in cart)
+  // derived count
+  const itemsCount = cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+
+  // Load cart from sessionStorage at mount
+  useEffect(() => {
+    const savedCart = sessionStorage.getItem("cartItems");
+    if (savedCart) {
+      setCartItems(JSON.parse(savedCart));
+    }
+  }, []);
+
+  // Save cart to sessionStorage whenever it changes
+  useEffect(() => {
+    sessionStorage.setItem("cartItems", JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  // Add item (or increase quantity if exists)
   const handleOrder = (img) => {
     setCartItems((prevItems) => {
       const existing = prevItems.find((item) => item.title === img.title);
@@ -28,20 +48,26 @@ export default function Home() {
     });
   };
 
-  // Decrease quantity or remove if reaches 0
+  // Decrease or remove
   const handleDecrease = (img) => {
-    setCartItems((prevItems) => {
-      return prevItems
+    setCartItems((prevItems) =>
+      prevItems
         .map((item) =>
           item.title === img.title
             ? { ...item, quantity: item.quantity - 1 }
             : item
         )
-        .filter((item) => item.quantity > 0); // remove if 0
-    });
+        .filter((item) => item.quantity > 0)
+    );
   };
 
-  // Fetch users (menu items)
+  const handleRemove = (img) => {
+    setCartItems((prevItems) =>
+      prevItems.filter((item) => item.title !== img.title)
+    );
+  };
+
+  // Fetch products
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -68,41 +94,38 @@ export default function Home() {
   }
 
   return (
-    <div className="relative text-white p-10 top-20 text-center ">
+    <div className="relative text-white p-10 top-20 text-center">
       {!isCartOpen && (
         <div
           onClick={() => setIsCartOpen(!isCartOpen)}
-          className="absolute top-4 right-4"
+          className="absolute top-4 right-4 cursor-pointer"
         >
-          <CartIcon />
+          <CartIcon items={itemsCount} />
         </div>
       )}
 
-      <div>
-        <h1 className="text-2xl font-bold mb-8">Discover Our Menu</h1>
-      </div>
+      <h1 className="text-2xl font-bold mb-8">Discover Our Menu</h1>
 
-      <div className="flex justify-center gap-8 items-center mb-4 flex-wrap">
+      {/* Product grid */}
+      <div className="flex w-[1200px] max-w-full justify-center gap-8 items-center mb-4 flex-wrap">
         {images.map((img, i) => {
           const cartItem = cartItems.find((item) => item.title === img.title);
           return (
-            <RevealOnScroll key={img.id || img.name} custom={i}>
-              <div
-                key={img.id}
-                className="bg-cover bg-center p-4 rounded-lg bg-gray-800 shadow-xl flex flex-col justify-between"
-              >
+            <RevealOnScroll key={img.id || img.title} custom={i}>
+              <div className="bg-cover bg-center p-4 rounded-lg w-[200px] max-w-full bg-gray-800 shadow-xl cursor-pointer hover:scale-103 transition duration-200 flex flex-col justify-between">
                 <div className="relative z-10">
                   <p>{img.title}</p>
                 </div>
                 <div>
-                  <img src={img.thumbnail} alt="Product image" />
+                  <img src={img.thumbnail} alt={img.title} />
                 </div>
+
                 {/* Order Button / Quantity Controls */}
                 {cartItem ? (
                   <div className="flex items-center justify-center gap-2 bg-gray-800 rounded-2xl py-2">
                     <button
                       onClick={() => handleDecrease(img)}
-                      className=" cursor-pointer px-1 py-1 border-1 bg-gray-700 rounded-full hover:bg-gray-800"
+                      className="cursor-pointer px-1 py-1 border-1 bg-gray-700 rounded-full hover:bg-gray-800"
                     >
                       <FaMinus />
                     </button>
@@ -117,7 +140,7 @@ export default function Home() {
                 ) : (
                   <button
                     onClick={() => handleOrder(img)}
-                    className="flex items-center justify-center gap-2 py-2 cursor-pointer font-semibold text-white bg-gray-800 rounded-2xl shadow-lg hover:bg-gray-900"
+                    className="flex items-center justify-center gap-2 py-2 cursor-pointer font-semibold text-white bg-gray-700 rounded-2xl shadow-lg hover:bg-gray-900"
                   >
                     <FaShoppingCart /> Add to Cart
                   </button>
@@ -127,14 +150,16 @@ export default function Home() {
           );
         })}
       </div>
-      {}
 
+      {/* Cart */}
       {isCartOpen && (
-        <div className="flex flex-col items-center justify-center right-0 bg-gray-700 rounded-lg ">
+        <div className="flex flex-col items-center justify-center right-0 bg-gray-700 rounded-lg">
           <Cart
             cartItems={cartItems}
-            onRemove={handleDecrease}
+            onRemove={handleRemove}
             onClose={() => setIsCartOpen(false)}
+            onClearAll={() => setCartItems([])}
+            itemsCount={itemsCount}
           />
         </div>
       )}

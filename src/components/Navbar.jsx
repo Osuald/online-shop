@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 const menuBar = [
-  { name: "Home", link: "/" },
-  { name: "About", link: "/about" },
-  { name: "Contact", link: "/contact" },
-  { name: "Blog", link: "/blog" },
-  { name: "Careers", link: "/career" },
+  { name: "Home", id: 1, link: "/" },
+  { name: "About", id: 2, link: "/about" },
+  { name: "Contact", id: 3, link: "/contact" },
+  { name: "Shop", id: 4, link: "/shop" },
+  { name: "Careers", id: 5, link: "/career" },
 ];
 
 const Navbar = ({ title }) => {
@@ -19,7 +19,7 @@ const Navbar = ({ title }) => {
       <div>
         {menuBar.map((item) => (
           <span
-            key={item}
+            key={item.id}
             className="mx-2 cursor-pointer font-semibold hover:text-gray-500"
           >
             <Link to={item.link}>{item.name}</Link>
