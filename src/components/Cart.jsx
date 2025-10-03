@@ -10,7 +10,7 @@ const Cart = ({ cartItems, onRemove, onClose, onClearAll, itemsCount }) => {
             className="self-end cursor-pointer text-white hover:text-gray-300"
             onClick={onClose}
           >
-            <FaXmark className="text-2xl" />
+            <FaXmark className="text-2xl border-1 bg-red-500 hover:bg-red-300 rounded-lg p-1" />
           </button>
         </div>
 

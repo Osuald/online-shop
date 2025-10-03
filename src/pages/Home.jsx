@@ -12,7 +12,7 @@ export default function Home() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [images, setImages] = useState([]);
+  const [shopItems, setShopItems] = useState([]);
 
   // derived count
   const itemsCount = cartItems.reduce(
@@ -34,26 +34,26 @@ export default function Home() {
   }, [cartItems]);
 
   // Add item (or increase quantity if exists)
-  const handleOrder = (img) => {
+  const handleOrder = (shopItem) => {
     setCartItems((prevItems) => {
-      const existing = prevItems.find((item) => item.title === img.title);
+      const existing = prevItems.find((item) => item.title === shopItem.title);
       if (existing) {
         return prevItems.map((item) =>
-          item.title === img.title
+          item.title === shopItem.title
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
-      return [...prevItems, { ...img, quantity: 1 }];
+      return [...prevItems, { ...shopItem, quantity: 1 }];
     });
   };
 
   // Decrease or remove
-  const handleDecrease = (img) => {
+  const handleDecrease = (shopItem) => {
     setCartItems((prevItems) =>
       prevItems
         .map((item) =>
-          item.title === img.title
+          item.title === shopItem.title
             ? { ...item, quantity: item.quantity - 1 }
             : item
         )
@@ -61,9 +61,9 @@ export default function Home() {
     );
   };
 
-  const handleRemove = (img) => {
+  const handleRemove = (shopItem) => {
     setCartItems((prevItems) =>
-      prevItems.filter((item) => item.title !== img.title)
+      prevItems.filter((item) => item.title !== shopItem.title)
     );
   };
 
@@ -75,7 +75,7 @@ export default function Home() {
           "https://dummyjson.com/products?limit=20"
         );
         const productData = await productRes.json();
-        setImages(productData.products);
+        setShopItems(productData.products);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -108,42 +108,49 @@ export default function Home() {
 
       {/* Product grid */}
       <div className="flex w-[1200px] max-w-full justify-center gap-8 items-center mb-4 flex-wrap">
-        {images.map((img, i) => {
-          const cartItem = cartItems.find((item) => item.title === img.title);
+        {shopItems.map((shopItem, i) => {
+          const cartItem = cartItems.find(
+            (item) => item.title === shopItem.title
+          );
           return (
-            <RevealOnScroll key={img.id || img.title} custom={i}>
-              <div className="bg-cover bg-center p-4 rounded-lg w-[200px] max-w-full bg-gray-800 shadow-xl cursor-pointer hover:scale-103 transition duration-200 flex flex-col justify-between">
+            <RevealOnScroll key={shopItem.id} custom={i}>
+              <div className="bg-cover bg-center p-4 rounded-lg w-[240px] max-w-full bg-gray-800 shadow-xl cursor-pointer hover:scale-103 transition duration-200 flex flex-col justify-between">
                 <div className="relative z-10">
-                  <p>{img.title}</p>
+                  <p>{shopItem.title}</p>
                 </div>
                 <div>
-                  <img src={img.thumbnail} alt={img.title} />
+                  <img src={shopItem.thumbnail} alt={shopItem.title} />
                 </div>
 
                 {/* Order Button / Quantity Controls */}
                 {cartItem ? (
                   <div className="flex items-center justify-center gap-2 bg-gray-800 rounded-2xl py-2">
                     <button
-                      onClick={() => handleDecrease(img)}
+                      onClick={() => handleDecrease(shopItem)}
                       className="cursor-pointer px-1 py-1 border-1 bg-gray-700 rounded-full hover:bg-gray-800"
                     >
                       <FaMinus />
                     </button>
                     <span>{cartItem.quantity}</span>
                     <button
-                      onClick={() => handleOrder(img)}
+                      onClick={() => handleOrder(shopItem)}
                       className="cursor-pointer px-1 py-1 border-1 bg-gray-700 rounded-full hover:bg-gray-800"
                     >
                       <FaPlus />
                     </button>
                   </div>
                 ) : (
-                  <button
-                    onClick={() => handleOrder(img)}
-                    className="flex items-center justify-center gap-2 py-2 cursor-pointer font-semibold text-white bg-gray-700 rounded-2xl shadow-lg hover:bg-gray-900"
-                  >
-                    <FaShoppingCart /> Add to Cart
-                  </button>
+                  <div className="flex justify-between gap-2 items-center">
+                    <p className=" text-sm font-semibold text-red-400">
+                      ${shopItem.price}
+                    </p>
+                    <button
+                      onClick={() => handleOrder(shopItem)}
+                      className="flex items-center justify-center gap-2 py-2 px-4 cursor-pointer text-white bg-gray-700 rounded-2xl shadow-lg hover:bg-gray-900"
+                    >
+                      <FaShoppingCart /> Add to Cart
+                    </button>
+                  </div>
                 )}
               </div>
             </RevealOnScroll>

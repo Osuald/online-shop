@@ -40,9 +40,8 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-
       <hr />
-      <div className="flex items-center p-1 justify-center">
+      <div className="flex items-center p-1 justify-center bottom-0 w-full">
         <p className="text-sm">&copy; {year} Food Shop. All rights reserved.</p>
       </div>
     </footer>

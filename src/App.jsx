@@ -6,7 +6,6 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import CircularLoadingIndicator from "./components/CircularLoadingIndicator";
 import About from "./pages/About";
-import Cart from "./components/cart";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -38,7 +37,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
         </Routes>
-
         <Footer />
       </BrowserRouter>
     </div>

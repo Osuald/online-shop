@@ -8,7 +8,7 @@ const revealVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.6,
+      duration: 0.3,
       delay: i * 0.1, // stagger based on custom value
     },
   }),
