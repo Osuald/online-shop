@@ -4,16 +4,16 @@ const menuBar = [
   { name: "About", id: 2, link: "/about" },
   { name: "Contact", id: 3, link: "/contact" },
   { name: "Shop", id: 4, link: "/shop" },
-  { name: "Careers", id: 5, link: "/career" },
+  { name: "Dashboard", id: 5, link: "/dashboard" },
 ];
 
 const Navbar = ({ title }) => {
   return (
-    <div className="fixed top-0 left-0 z-50 right-0 p-4 flex justify-between items-center  shadow-lg bg-gray-700 text-white">
+    <div className="font-lato fixed top-0 left-0 z-50 right-0 p-4 flex justify-between items-center  shadow-lg bg-gray-700 text-white">
       <h1 className="text-xl font-bold border p-2 rounded-full border-3">
         FOS
       </h1>
-      <div className="text-3xl font-bold mb-4">
+      <div className="text-3xl font-lato font-bold mb-4">
         {title ? title : "Fancy Online Shop"}
       </div>
       <div>

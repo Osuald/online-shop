@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import CircularLoadingIndicator from "./components/CircularLoadingIndicator";
 import About from "./pages/About";
+import Dashboard from "./components/Dashboard";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -33,10 +34,14 @@ function App() {
     <div className="relative  bg-gray-700 text-white min-h-screen">
       <BrowserRouter>
         <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-        </Routes>
+        <main className="overflow-y-auto pt-20 min-h-[80vh]">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Routes>
+        </main>
+
         <Footer />
       </BrowserRouter>
     </div>

@@ -3,6 +3,7 @@ import CircularLoadingIndicator from "../components/CircularLoadingIndicator";
 import Cart from "../components/Cart";
 import RevealOnScroll from "../components/RevealOnScroll";
 import CartIcon from "../components/CartIcon";
+import SearchBox from "../components/SearchBox";
 import { FaPlus, FaMinus, FaShoppingCart } from "react-icons/fa";
 
 export default function Home() {
@@ -13,6 +14,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [shopItems, setShopItems] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // derived count
   const itemsCount = cartItems.reduce(
@@ -67,6 +69,15 @@ export default function Home() {
     );
   };
 
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredItems = shopItems.filter(function (item) {
+    return item.title.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+  const displayTerm = searchTerm ? filteredItems : shopItems;
   // Fetch products
   useEffect(() => {
     const fetchData = async () => {
@@ -94,7 +105,7 @@ export default function Home() {
   }
 
   return (
-    <div className="relative text-white p-10 top-20 text-center">
+    <div className="relative text-white p-10 text-center">
       {!isCartOpen && (
         <div
           onClick={() => setIsCartOpen(!isCartOpen)}
@@ -103,12 +114,14 @@ export default function Home() {
           <CartIcon items={itemsCount} />
         </div>
       )}
-
-      <h1 className="text-2xl font-bold mb-8">Discover Our Menu</h1>
+      <div className="mb-8 items-center justify-between flex  gap-4 w-[60vw] max-w-4xl">
+        <SearchBox onChange={handleSearch} />
+        <h1 className="text-2xl font-bold">Discover Our Menu</h1>
+      </div>
 
       {/* Product grid */}
       <div className="flex w-[1200px] max-w-full justify-center gap-8 items-center mb-4 flex-wrap">
-        {shopItems.map((shopItem, i) => {
+        {displayTerm.map((shopItem, i) => {
           const cartItem = cartItems.find(
             (item) => item.title === shopItem.title
           );
@@ -165,7 +178,10 @@ export default function Home() {
             cartItems={cartItems}
             onRemove={handleRemove}
             onClose={() => setIsCartOpen(false)}
-            onClearAll={() => setCartItems([])}
+            onClearAll={() => {
+              setCartItems([]);
+              setIsCartOpen(false);
+            }}
             itemsCount={itemsCount}
           />
         </div>

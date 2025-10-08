@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 export default function Footer() {
   const [year, setYear] = useState(new Date().getFullYear());
   return (
-    <footer className="flex flex-col px-10 mt-10 text-white">
+    <footer className="flex flex-col px-10 mt-4 text-white">
       <hr />
       <div className="flex justify-around p-4">
         <div className="">
