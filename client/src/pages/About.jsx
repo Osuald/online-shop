@@ -1,6 +1,22 @@
-import React from "react";
+import { useEffect, useState } from "react";
 
 const About = () => {
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    // Get the API base URL from our .env file
+    const Url = import.meta.env.VITE_API_URL;
+
+    // Fetch data from the backend
+    fetch(`${Url}/`)
+      .then((res) => res.text())
+      .then((data) => setMessage(data))
+      .catch((err) => {
+        console.error("Error fetching data:", err);
+        setMessage("Failed to connect to backend");
+      });
+  }, []);
+
   return (
     <div className="flex flex-col justify-center items-center mt-20 p-4">
       <h1 className="text-3xl font-bold text-center">About Us</h1>
@@ -19,6 +35,12 @@ const About = () => {
           <li>Add items to your cart</li>
           <li>Manage your orders</li>
         </ul>
+      </div>
+      <div className="mt-8 p-4 border rounded-lg bg-gray-500 w-full max-w-2xl">
+        <p className="font-bold">
+          This is the message from the backend:{" "}
+          <span className="text-cyan-500">{message}</span>
+        </p>
       </div>
     </div>
   );

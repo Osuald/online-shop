@@ -1,30 +1,30 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import mongoose from "mongoose";
+import { connectDB } from "./config/db.js";
 
-// Load environment variables from .env file
+// Load env variables
 dotenv.config();
 
+// Initialize app
 const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json()); // allows JSON body parsing
+app.use(express.json());
 
-// Simple test route
+// Connect MongoDB
+connectDB();
+
+// Basic test route
 app.get("/", (req, res) => {
-  res.send("Fancy Online Shop backend is running");
+  res.send("Fancy Online Shop backend is connected");
 });
 
-// MongoDB Connection
-const MONGO_URI = process.env.MONGO_URI;
+// Import routes
+import productRoutes from "./routes/productRoutes.js";
+app.use("/api/products", productRoutes);
 
-mongoose
-  .connect(MONGO_URI)
-  .then(() => console.log("Connected to MongoDB successfully"))
-  .catch((err) => console.error("MongoDB connection failed:", err));
-
-// Start the server
+// Start server
 const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
